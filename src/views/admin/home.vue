@@ -1,17 +1,15 @@
 <script setup>
     import '@/assets/admin/css/home.css'
+    import HomeSide from '@/components/admin/home/HomeSide.vue'
+    import HomeHeader from '@/components/admin/home/HomeHeader.vue'
 </script>
 
 <template>
     <div class="dr-home">
-        <div class="header">
-
-        </div>
+        <HomeHeader />
 
         <div class="main">
-            <div class="side">
-
-            </div>
+            <HomeSide />
 
             <div class="content">
                 <router-view />
