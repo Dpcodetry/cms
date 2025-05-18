@@ -1,11 +1,22 @@
 <script setup>
     import { reactive } from 'vue'
+    import AxiosDR from '@/utils/AxiosDR'
+    import { ElMessage } from 'element-plus'
 
     const data = reactive({
-        list: [
-            { id: '1', name: 'question', email: '', remark: 'dpcodetry.com', create_time: '2025-05-18'},
-            { id: '2', name: 'answer', email: '', remark: 'www.dpcodetry.com', create_time: '2025-05-18'}
-        ]
+        list: []
+    })
+
+    AxiosDR.get('/api/adm/list').then(result => {
+        console.log(result)
+
+        if(!result.status){
+            ElMessage.error(result.msg)
+            return
+        }
+        data.list = result.data.list
+    }).catch(err => {
+        console.log("err:", err)
     })
 </script>
 
