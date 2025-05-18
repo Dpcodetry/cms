@@ -1,5 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { useAdminStore } from '@/stores/admin/admin.js'
+import TimeDR from '@/utils/TimeDR'
+import { ElMessage } from 'element-plus'
+import LocalDR from '@/utils/LocalDR'
 
 const routes = [
     {
@@ -49,8 +52,18 @@ router.beforeEach((to, from, next) => {
         const adminStore = useAdminStore()
         // 如果数据仓库中的 token 为空
         if(adminStore.data.token === ""){
-            console.log("未登录")
+            ElMessage.error("未登录")
             // 跳转到登录页
+            router.push("/login")
+        }
+
+        let startTime = TimeDR.now()
+        let endTime = adminStore.data.expireDate
+        let timeSubResult = TimeDR.timeSub(startTime, endTime)
+        console.log("timeSubResult:", timeSubResult)
+        if(timeSubResult.expire){
+            ElMessage.error("登录已过期，请重新登录")
+            LocalDR.remove("admin")
             router.push("/login")
         }
 
