@@ -1,23 +1,53 @@
 <script setup>
-    import { reactive } from 'vue'
+    import { reactive, onMounted } from 'vue'
     import AxiosDR from '@/utils/AxiosDR'
-    import { ElMessage } from 'element-plus'
+    import { ElMessage, ElMessageBox } from 'element-plus'
 
     const data = reactive({
         list: []
     })
 
-    AxiosDR.get('/api/adm/list').then(result => {
-        console.log(result)
+    onMounted(() => {
+        AxiosDR.get('/api/adm/list').then(result => {
+            // console.log(result)
 
-        if(!result.status){
-            ElMessage.error(result.msg)
-            return
-        }
-        data.list = result.data.list
-    }).catch(err => {
-        console.log("err:", err)
+            if(!result.status){
+                ElMessage.error(result.msg)
+                return
+            }
+            data.list = result.data.list
+        }).catch(err => {
+            console.log("err:", err)
+        })
     })
+
+    const del = async (row) => {
+        // console.log(row.id)
+
+        try {
+            await ElMessageBox.confirm('确认删除?', '标题', {
+                type: 'warning',
+                confirmButtonText: '确认',
+                cancelButtonText: '取消'
+            })
+
+            let delResult = await AxiosDR.post('/api/adm/del', {id: String(row.id)})
+            if (!delResult.status) {
+                ElMessage.error(delResult.msg)
+                return
+            }
+
+            // 删除之后重新获取列表
+            let getListResult = await AxiosDR.get('/api/adm/list')
+            if (!getListResult.status) {
+                ElMessage.error(getListResult.msg)
+                return
+            }
+            data.list = getListResult.data.list
+        } catch (err) {
+            console.log("err:", err)
+        }
+    }
 </script>
 
 <template>
@@ -30,7 +60,7 @@
         <el-table-column label="操作" width="150">
             <template #default="scope">
                 <el-button size="small" type="primary">编辑</el-button>
-                <el-button size="small">删除</el-button>
+                <el-button size="small" @click="del(scope.row)"> 删除</el-button>
             </template>
         </el-table-column>
 
