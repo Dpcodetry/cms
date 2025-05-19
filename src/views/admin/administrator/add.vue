@@ -1,5 +1,8 @@
 <script setup>
     import { reactive } from 'vue'
+    import { ElMessage } from 'element-plus'
+    import AxiosDR from '@/utils/AxiosDR.js'
+    import TimeDR from '@/utils/TimeDR.js'
 
     const data = reactive({
         name: '',
@@ -11,6 +14,30 @@
 
     const add = () => {
         console.log(data)
+
+        if (data.name === '') {
+            ElMessage.error('名称不能为空')
+            return
+        }
+
+        if (data.password === '') {
+            ElMessage.error('密码不能为空')
+            return
+        }
+
+        data.create_time = TimeDR.now()
+
+        AxiosDR.post('/api/adm/add', data).then(result => {
+            console.log(result)
+            if (!result.status) {
+                ElMessage.error(result.msg)
+                return
+            }
+
+            ElMessage.success("添加成功")
+        }).catch(err => {
+            console.log("err:", err)
+        })
     }
 
     const reset = () => {
