@@ -2,11 +2,15 @@
     import { reactive, onMounted } from 'vue'
     import AxiosDR from '@/utils/AxiosDR'
     import { ElMessage, ElMessageBox } from 'element-plus'
+    import { useRouter } from 'vue-router'
+
+    // 初始化路由器
+    const router = useRouter()
 
     const data = reactive({
         list: []
     })
-
+    // 组件挂载到 DOM 并且完成渲染之后才调用
     onMounted(() => {
         AxiosDR.get('/api/adm/list').then(result => {
             // console.log(result)
@@ -20,7 +24,7 @@
             console.log("err:", err)
         })
     })
-
+    // 删除管理员
     const del = async (row) => {
         // console.log(row.id)
 
@@ -48,6 +52,13 @@
             console.log("err:", err)
         }
     }
+
+    // 编辑管理员
+    // 这里的 row 是表格传入的当前行数据
+    const edit = (row) => {
+        // 页面跳转
+        router.push({path: '/admin/administrator/edit', query: {id: row.id}})
+    }
 </script>
 
 <template>
@@ -59,7 +70,7 @@
 
         <el-table-column label="操作" width="150">
             <template #default="scope">
-                <el-button size="small" type="primary">编辑</el-button>
+                <el-button size="small" type="primary" @click="edit(scope.row)">编辑</el-button>
                 <el-button size="small" @click="del(scope.row)"> 删除</el-button>
             </template>
         </el-table-column>

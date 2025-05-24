@@ -25,6 +25,10 @@ const routes = [
                 component: () => import("@/views/admin/administrator/add.vue")
             },
             {
+                path: "administrator/edit",
+                component: () => import("@/views/admin/administrator/edit.vue")
+            },
+            {
                 path: "administrator/list",
                 component: () => import("@/views/admin/administrator/list.vue")
             },
